@@ -10,16 +10,20 @@
 #
 # After building, need to run ldld -S <exename> to codesign
 CC=clang
-OBJ=main.o
+OBJ=stack-overflow.o
 NO_ASLR_FLAGS=-Wl,-no_pie
-TARGET=-target arm64-apple-darwin -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk
-OLD_TARGET=-arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk
+DEBUG_FLAGS=-g
+IOS_TARGET=-target arm64-apple-darwin -isysroot ./SDKs/iPhoneOS9.3.sdk
+MACOS_TARGET=
+
+ACTIVE_TARGET=$(MACOS_TARGET)
 
 %.o: %.c
-	$(CC) -c -o $@ $< $(TARGET)
+	$(CC) -c -o $@ $< $(DEBUG_FLAGS) $(ACTIVE_TARGET)
 
 main: $(OBJ)
-	$(CC) -o $@ $^ $(TARGET)
+	$(CC) -o stack-overflow stack-overflow.o $(NO_ASLR_FLAGS) $(DEBUG_FLAGS) $(ACTIVE_TARGET)
+#	$(CC) -o $@ $^ $(TARGET)
 
 clean:
 	rm *.o main 
